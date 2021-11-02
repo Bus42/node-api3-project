@@ -1,6 +1,6 @@
 function logger(req, res, next) {
   // DO YOUR MAGIC
-  console.log(`request from ${req.get("host")} to /users${req.url}`);
+  console.log(`request from ${req.get("host")} to ${req.url} at ${new Date().toISOString()}`);
   res.status(202);
   next();
 }
