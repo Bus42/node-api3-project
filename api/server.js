@@ -11,6 +11,8 @@ server.use(express.json());
 
 server.use("/users", logger, usersRouter);
 
-server.use("/", logger);
+server.use("/", logger, (req, res) => {
+  res.status(200).send('base route')
+});
 
 module.exports = server;
