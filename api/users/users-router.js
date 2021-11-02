@@ -4,10 +4,8 @@ const express = require("express");
 const usersModel = require("./users-model");
 // const postsModel = require('../posts/posts-model');
 // The middleware functions also need to be required
-const logger = require("../middleware/middleware");
 
 const router = express.Router();
-// router.use(logger());
 
 router.get("/", (req, res) => {
   // RETURN AN ARRAY WITH ALL THE USERS
