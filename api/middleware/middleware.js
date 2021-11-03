@@ -17,11 +17,11 @@ function validateUserId(req, res, next) {
   usersModel
     .getById(userId)
     .then((user) => {
-      if (user) {
+      if (!user) {
+        res.status(404).send({ message: "user not found" });
+      } else {
         req.user = user;
         next();
-      } else {
-        res.status(404).send({ message: "user not found" });
       }
     })
     .catch((err) => {
@@ -32,22 +32,27 @@ function validateUserId(req, res, next) {
 function validateUser(req, res, next) {
   // DO YOUR MAGIC
   const userName = req.body.name;
-  if (userName) {
-    next();
-  } else {
+  if (!userName) {
     res.status(400).send({ message: "missing required name field" });
+  } else {
+    next();
   }
 }
 
-// function validatePost(req, res, next) {
-//   // DO YOUR MAGIC
-//   next();
-// }
+function validatePost(req, res, next) {
+  // DO YOUR MAGIC
+  const postText = req.body.text;
+  if (!postText) {
+    res.status(400).send({ message: "missing required text field" });
+  } else {
+    next();
+  }
+}
 
 // do not forget to expose these functions to other modules
 module.exports = {
   logger,
   validateUserId,
   validateUser,
-  // validatePost,
+  validatePost,
 };

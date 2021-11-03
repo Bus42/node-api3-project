@@ -25,9 +25,9 @@ router.get("/", (req, res) => {
 router.get("/:id", validateUserId, (req, res) => {
   // RETURN THE USER OBJECT
   // this needs a middleware to verify user id
-  const userID = req.params.id;
+  const userId = req.params.id;
   usersModel
-    .getById(userID)
+    .getById(userId)
     .then((user) => {
       if (user) {
         res.status(200).send(user);
@@ -49,11 +49,16 @@ router.post("/", validateUser, (req, res) => {
     .catch((err) => res.status(500).send({ message: err }));
 });
 
-// router.put('/:id', (req, res) => {
-//   // RETURN THE FRESHLY UPDATED USER OBJECT
-//   // this needs a middleware to verify user id
-//   // and another middleware to check that the request body is valid
-// });
+router.put("/:id", validateUserId, validateUser, (req, res) => {
+  // RETURN THE FRESHLY UPDATED USER OBJECT
+  // this needs a middleware to verify user id
+  // and another middleware to check that the request body is valid
+  const userId = req.params.id;
+  usersModel
+    .update(userId, req.body)
+    .then((user) => res.status(200).send(user))
+    .catch((err) => res.status(500).send({ message: err }));
+});
 
 // router.delete('/:id', (req, res) => {
 //   // RETURN THE FRESHLY DELETED USER OBJECT
