@@ -2,7 +2,7 @@ const express = require("express");
 
 // You will need `users-model.js` and `posts-model.js` both
 const usersModel = require("./users-model");
-// const postsModel = require('../posts/posts-model');
+const postsModel = require("../posts/posts-model");
 // The middleware functions also need to be required
 const middleware = require("../middleware/middleware");
 
@@ -71,10 +71,15 @@ router.delete("/:id", validateUserId, (req, res) => {
   usersModel.remove(userId).then(() => res.send(user));
 });
 
-// router.get('/:id/posts', (req, res) => {
-//   // RETURN THE ARRAY OF USER POSTS
-//   // this needs a middleware to verify user id
-// });
+router.get("/:id/posts", validateUserId, (req, res) => {
+  const userId = req.params.id;
+  // RETURN THE ARRAY OF USER POSTS
+  // this needs a middleware to verify user id
+  postsModel
+    .getById(userId)
+    .then((posts) => res.status(200).send(posts))
+    .catch((err) => res.status(500).send({ message: err }));
+});
 
 // router.post('/:id/posts', (req, res) => {
 //   // RETURN THE NEWLY CREATED USER POST
