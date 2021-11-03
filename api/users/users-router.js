@@ -1,13 +1,11 @@
 const express = require("express");
-
 // You will need `users-model.js` and `posts-model.js` both
 const usersModel = require("./users-model");
 const postsModel = require("../posts/posts-model");
 // The middleware functions also need to be required
 const middleware = require("../middleware/middleware");
 
-const { validateUserId, validateUser } = middleware;
-
+const { validateUserId, validateUser, validatePost } = middleware;
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -19,7 +17,7 @@ router.get("/", (req, res) => {
         ? res.status(200).send(response)
         : res.status(500).send({ message: "could not fetch users" })
     )
-    .catch((err) => res.status(500).send({ message: err }));
+    .catch(() => res.status(500).send({ message: "server error" }));
 });
 
 router.get("/:id", validateUserId, (req, res) => {
@@ -35,9 +33,7 @@ router.get("/:id", validateUserId, (req, res) => {
         res.status(404).send({ message: "user not found" });
       }
     })
-    .catch((err) => {
-      res.status(500).send({ message: err });
-    });
+    .catch(() => res.status(500).send({ message: "server error" }));
 });
 
 router.post("/", validateUser, (req, res) => {
@@ -75,17 +71,22 @@ router.get("/:id/posts", validateUserId, (req, res) => {
   const userId = req.params.id;
   // RETURN THE ARRAY OF USER POSTS
   // this needs a middleware to verify user id
-  postsModel
-    .getById(userId)
+  usersModel
+    .getUserPosts(userId)
     .then((posts) => res.status(200).send(posts))
     .catch((err) => res.status(500).send({ message: err }));
 });
 
-// router.post('/:id/posts', (req, res) => {
-//   // RETURN THE NEWLY CREATED USER POST
-//   // this needs a middleware to verify user id
-//   // and another middleware to check that the request body is valid
-// });
+router.post("/:id/posts", validateUserId, validatePost, (req, res) => {
+  // RETURN THE NEWLY CREATED USER POST
+  // this needs a middleware to verify user id
+  // and another middleware to check that the request body is valid
+  const post = req.body;
+  postsModel
+    .insert(post)
+    .then((newPost) => res.status(200).send(newPost))
+    .catch((err) => res.status(500).send({ message: err }));
+});
 
 // do not forget to export the router
 module.exports = router;

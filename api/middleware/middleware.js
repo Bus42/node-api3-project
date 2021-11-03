@@ -1,11 +1,26 @@
 const usersModel = require("../users/users-model");
+const colors = require("colors");
+colors.enable()
+
+colors.setTheme({
+  silly: 'rainbow',
+  input: 'grey',
+  verbose: 'cyan',
+  prompt: 'grey',
+  info: 'green',
+  data: 'grey',
+  help: 'cyan',
+  warn: 'orange',
+  debug: 'blue',
+  error: 'red'
+});
 
 function logger(req, res, next) {
   // DO YOUR MAGIC
   console.log(
     `request from ${req.get("host")} to ${
       req.url
-    } at ${new Date().toISOString()}`
+    } at ${new Date().toISOString()}`.debug
   );
   res.status(202);
   next();
@@ -18,13 +33,16 @@ function validateUserId(req, res, next) {
     .getById(userId)
     .then((user) => {
       if (!user) {
+        console.log("user not validated".warn)
         res.status(404).send({ message: "user not found" });
       } else {
+        console.log("user validated".verbose)
         req.user = user;
         next();
       }
     })
     .catch((err) => {
+      console.log("check your code, bro".error)
       res.status(500).send({ message: err });
     });
 }
