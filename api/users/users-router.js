@@ -6,7 +6,7 @@ const usersModel = require("./users-model");
 // The middleware functions also need to be required
 const middleware = require("../middleware/middleware");
 
-const { validateUserId } = middleware;
+const { validateUserId, validateUser } = middleware;
 
 const router = express.Router();
 
@@ -40,10 +40,14 @@ router.get("/:id", validateUserId, (req, res) => {
     });
 });
 
-// router.post('/', (req, res) => {
-//   // RETURN THE NEWLY CREATED USER OBJECT
-//   // this needs a middleware to check that the request body is valid
-// });
+router.post("/", validateUser, (req, res) => {
+  // RETURN THE NEWLY CREATED USER OBJECT
+  // this needs a middleware to check that the request body is valid
+  usersModel
+    .insert(req.body)
+    .then((newUser) => res.status(200).send(newUser))
+    .catch((err) => res.status(500).send({ message: err }));
+});
 
 // router.put('/:id', (req, res) => {
 //   // RETURN THE FRESHLY UPDATED USER OBJECT

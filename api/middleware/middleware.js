@@ -29,10 +29,15 @@ function validateUserId(req, res, next) {
     });
 }
 
-// function validateUser(req, res, next) {
-//   // DO YOUR MAGIC
-//   next();
-// }
+function validateUser(req, res, next) {
+  // DO YOUR MAGIC
+  const userName = req.body.name;
+  if (userName) {
+    next();
+  } else {
+    res.status(400).send({ message: "missing required name field" });
+  }
+}
 
 // function validatePost(req, res, next) {
 //   // DO YOUR MAGIC
@@ -43,6 +48,6 @@ function validateUserId(req, res, next) {
 module.exports = {
   logger,
   validateUserId,
-  // validateUser,
+  validateUser,
   // validatePost,
 };
