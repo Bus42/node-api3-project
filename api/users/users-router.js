@@ -60,10 +60,16 @@ router.put("/:id", validateUserId, validateUser, (req, res) => {
     .catch((err) => res.status(500).send({ message: err }));
 });
 
-// router.delete('/:id', (req, res) => {
-//   // RETURN THE FRESHLY DELETED USER OBJECT
-//   // this needs a middleware to verify user id
-// });
+router.delete("/:id", validateUserId, (req, res) => {
+  // RETURN THE FRESHLY DELETED USER OBJECT
+  // this needs a middleware to verify user id
+  const userId = req.params.id;
+  let user = {};
+  usersModel.getById(userId).then((doomedUser) => {
+    user = doomedUser;
+  });
+  usersModel.remove(userId).then(() => res.send(user));
+});
 
 // router.get('/:id/posts', (req, res) => {
 //   // RETURN THE ARRAY OF USER POSTS
