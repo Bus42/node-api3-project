@@ -4,6 +4,9 @@ const express = require("express");
 const usersModel = require("./users-model");
 // const postsModel = require('../posts/posts-model');
 // The middleware functions also need to be required
+const middleware = require("../middleware/middleware");
+
+const { validateUserId } = middleware;
 
 const router = express.Router();
 
@@ -11,18 +14,31 @@ router.get("/", (req, res) => {
   // RETURN AN ARRAY WITH ALL THE USERS
   usersModel
     .get()
-    .then((response) => {
+    .then((response) =>
       response
         ? res.status(200).send(response)
-        : res.status(500).send({ message: "could not fetch users" });
-    })
+        : res.status(500).send({ message: "could not fetch users" })
+    )
     .catch((err) => res.status(500).send({ message: err }));
 });
 
-// router.get('/:id', (req, res) => {
-//   // RETURN THE USER OBJECT
-//   // this needs a middleware to verify user id
-// });
+router.get("/:id", validateUserId, (req, res) => {
+  // RETURN THE USER OBJECT
+  // this needs a middleware to verify user id
+  const userID = req.params.id;
+  usersModel
+    .getById(userID)
+    .then((user) => {
+      if (user) {
+        res.status(200).send(user);
+      } else {
+        res.status(404).send({ message: "user not found" });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err });
+    });
+});
 
 // router.post('/', (req, res) => {
 //   // RETURN THE NEWLY CREATED USER OBJECT
